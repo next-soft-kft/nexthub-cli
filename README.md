@@ -1,23 +1,25 @@
-# deploysapp-cli
+# nexthub-cli
 
-Command-line interface for [NextHub](https://nexthub.hu) (formerly DeploysApp) — deploy, manage, and monitor your services from the terminal.
+Command-line interface for [NextHub](https://nexthub.hu) — deploy, manage, and monitor your services from the terminal.
 
 ```
-npm install -g deploysapp-cli
+npm install -g nexthub-cli
 ```
 
 Requires **Node >= 20**.
 
-Binary names: `deploysapp` and `dsa` (short alias).
+The command is `nexthub`. The old names from the `deploysapp-cli` package, `deploysapp` and `dsa`, still work as aliases for the same program, so existing scripts keep running.
+
+> **Coming from `deploysapp-cli`?** Run `npm uninstall -g deploysapp-cli && npm install -g nexthub-cli`. You stay logged in: the stored login in `~/.deploysapp/config.json` is moved to `~/.nexthub/config.json` the first time you run a command. `DEPLOYSAPP_*` env vars and `.deploysapp.json` link files are still read.
 
 ---
 
 ## Quick start
 
 ```sh
-deploysapp login          # authenticate this device (opens browser)
-deploysapp link           # bind the current directory to a service
-deploysapp deploy         # redeploy from git and stream the build log
+nexthub login          # authenticate this device (opens browser)
+nexthub link           # bind the current directory to a service
+nexthub deploy         # redeploy from git and stream the build log
 ```
 
 ---
@@ -27,14 +29,14 @@ deploysapp deploy         # redeploy from git and stream the build log
 ### Interactive (recommended for local dev)
 
 ```sh
-deploysapp login
+nexthub login
 ```
 
-Opens a browser-based device-code flow. Credentials are saved to `~/.deploysapp/config.json` (mode 0600).
+Opens a browser-based device-code flow. Credentials are saved to `~/.nexthub/config.json` (mode 0600).
 
 ```sh
-deploysapp logout         # remove stored credentials
-deploysapp whoami         # print the authenticated account
+nexthub logout         # remove stored credentials
+nexthub whoami         # print the authenticated account
 ```
 
 ### CI / headless environments
@@ -42,18 +44,18 @@ deploysapp whoami         # print the authenticated account
 Skip `login` entirely — set env vars instead:
 
 ```sh
-export DEPLOYSAPP_API_KEY=dsa_xxxxxxxxxxxx
+export NEXTHUB_API_KEY=dsa_xxxxxxxxxxxx
 # optional: point at a self-hosted API
-export DEPLOYSAPP_API_URL=https://api.your-instance.example.com
+export NEXTHUB_API_URL=https://api.your-instance.example.com
 ```
 
-`DEPLOYSAPP_API_KEY` takes precedence over the stored config file.
+`NEXTHUB_API_KEY` takes precedence over the stored config file. (API keys keep the `dsa_` prefix.)
 
 ---
 
-## The `.deploysapp.json` link file
+## The `.nexthub.json` link file
 
-Running `deploysapp link` (or `dsa link`) writes a `.deploysapp.json` file in the current directory that records the service (and project) id:
+Running `nexthub link` writes a `.nexthub.json` file in the current directory that records the service (and project) id:
 
 ```json
 {
@@ -62,7 +64,7 @@ Running `deploysapp link` (or `dsa link`) writes a `.deploysapp.json` file in th
 }
 ```
 
-All commands that operate on a specific service read this file automatically. You can override it at any time with the `--service <id>` flag.
+All commands that operate on a specific service read this file automatically. You can override it at any time with the `--service <id>` flag. A legacy `.deploysapp.json` is still read when no `.nexthub.json` is present.
 
 ---
 
@@ -72,21 +74,21 @@ All commands that operate on a specific service read this file automatically. Yo
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `login [--no-open]` | Authenticate this device via browser | `dsa login` |
-| `logout` | Remove stored credentials | `dsa logout` |
-| `whoami` | Print the currently authenticated account | `dsa whoami` |
+| `login [--no-open]` | Authenticate this device via browser | `nexthub login` |
+| `logout` | Remove stored credentials | `nexthub logout` |
+| `whoami` | Print the currently authenticated account | `nexthub whoami` |
 
 ### Linking
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `link [--service <id>]` | Bind the current directory to a service (writes `.deploysapp.json`) | `dsa link` |
+| `link [--service <id>]` | Bind the current directory to a service (writes `.nexthub.json`) | `nexthub link` |
 
 ### Deployment
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `deploy [--service <id>]` | Trigger a redeploy from git and stream the build log | `dsa deploy --service svc_abc123` |
+| `deploy [--service <id>]` | Trigger a redeploy from git and stream the build log | `nexthub deploy --service svc_abc123` |
 
 ### Logs
 
@@ -96,7 +98,7 @@ logs [--service <id>] [-f] [--build | --runtime] [--tail <n>]
 
 | Flag | Description |
 |------|-------------|
-| `--service <id>` | Target service (overrides `.deploysapp.json`) |
+| `--service <id>` | Target service (overrides `.nexthub.json`) |
 | `--build` | Show the latest build log |
 | `--runtime` | Show runtime logs (default) |
 | `-f, --follow` | Follow (stream) runtime logs |
@@ -105,24 +107,24 @@ logs [--service <id>] [-f] [--build | --runtime] [--tail <n>]
 Examples:
 
 ```sh
-dsa logs                        # last 200 lines of runtime logs
-dsa logs --build                # latest build log
-dsa logs -f                     # follow runtime logs live
-dsa logs -f --tail 50           # follow, starting from last 50 lines
+nexthub logs                        # last 200 lines of runtime logs
+nexthub logs --build                # latest build log
+nexthub logs -f                     # follow runtime logs live
+nexthub logs -f --tail 50           # follow, starting from last 50 lines
 ```
 
 ### Service lifecycle
 
-All service commands accept `--service <id>` to override `.deploysapp.json`.
+All service commands accept `--service <id>` to override `.nexthub.json`.
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `ps` | List all services and their current status | `dsa ps` |
-| `restart [--service <id>]` | Restart a service | `dsa restart` |
-| `stop [--service <id>]` | Stop a service | `dsa stop --service svc_abc123` |
-| `start [--service <id>]` | Start a stopped service | `dsa start` |
-| `open [--service <id>]` | Open the service URL in the browser | `dsa open` |
-| `scale --replicas <n> [--service <id>]` | Set the replica count | `dsa scale --replicas 3` |
+| `ps` | List all services and their current status | `nexthub ps` |
+| `restart [--service <id>]` | Restart a service | `nexthub restart` |
+| `stop [--service <id>]` | Stop a service | `nexthub stop --service svc_abc123` |
+| `start [--service <id>]` | Start a stopped service | `nexthub start` |
+| `open [--service <id>]` | Open the service URL in the browser | `nexthub open` |
+| `scale --replicas <n> [--service <id>]` | Set the replica count | `nexthub scale --replicas 3` |
 
 ### Environment variables
 
@@ -130,10 +132,10 @@ All `env` subcommands accept `--service <id>`.
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `env list` | List all env vars for a service | `dsa env list` |
-| `env get <key>` | Print the value of a single env var | `dsa env get DATABASE_URL` |
-| `env set <KEY=VALUE> [--restart]` | Set an env var (optionally restart) | `dsa env set PORT=3000 --restart` |
-| `env rm <key> [--restart]` | Delete an env var (optionally restart) | `dsa env rm OLD_VAR --restart` |
+| `env list` | List all env vars for a service | `nexthub env list` |
+| `env get <key>` | Print the value of a single env var | `nexthub env get DATABASE_URL` |
+| `env set <KEY=VALUE> [--restart]` | Set an env var (optionally restart) | `nexthub env set PORT=3000 --restart` |
+| `env rm <key> [--restart]` | Delete an env var (optionally restart) | `nexthub env rm OLD_VAR --restart` |
 
 ### Secrets
 
@@ -141,8 +143,8 @@ Project-scoped secrets can be attached to a service as an env var.
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `secret list [--project <id>]` | List secrets for a project | `dsa secret list` |
-| `secret attach <name> --as <ENV_KEY> [--project <id>] [--service <id>]` | Expose a secret to a service as an env var | `dsa secret attach db-password --as DATABASE_PASSWORD` |
+| `secret list [--project <id>]` | List secrets for a project | `nexthub secret list` |
+| `secret attach <name> --as <ENV_KEY> [--project <id>] [--service <id>]` | Expose a secret to a service as an env var | `nexthub secret attach db-password --as DATABASE_PASSWORD` |
 
 ---
 
@@ -150,14 +152,15 @@ Project-scoped secrets can be attached to a service as an env var.
 
 | Source | Key | Default |
 |--------|-----|---------|
-| Env var | `DEPLOYSAPP_API_KEY` | — |
-| Env var | `DEPLOYSAPP_API_URL` | `https://api.nexthub.hu` |
-| File | `~/.deploysapp/config.json` | written by `login` |
+| Env var | `NEXTHUB_API_KEY` | — |
+| Env var | `NEXTHUB_API_URL` | `https://api.nexthub.hu` |
+| Env var | `NEXTHUB_CONFIG_HOME` | `~/.nexthub` |
+| File | `~/.nexthub/config.json` | written by `login` |
 
-Environment variables always take precedence over the config file.
+Environment variables always take precedence over the config file. The pre-rename names `DEPLOYSAPP_API_KEY`, `DEPLOYSAPP_API_URL` and `DEPLOYSAPP_CONFIG_HOME` are still accepted; the `NEXTHUB_*` name wins if both are set.
 
 ---
 
 ## License
 
-ISC
+MIT

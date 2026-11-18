@@ -8,9 +8,12 @@ import { ps, restart, stop, start, scale, open } from "../src/commands/service.j
 import { envList, envGet, envSet, envRm } from "../src/commands/env.js";
 import { secretList, secretAttach } from "../src/commands/secret.js";
 import { printErr } from "../src/output.js";
+import { VERSION } from "../src/meta.js";
 
 const program = new Command();
-program.name("deploysapp").description("DeploysApp CLI").version("0.1.0");
+program.name("nexthub")
+  .description("NextHub CLI (nexthub.hu) — also available as `deploysapp` and `dsa`")
+  .version(VERSION);
 
 function wrap(fn) {
   return async (...args) => { try { await fn(...args); } catch (e) { printErr(e); } };

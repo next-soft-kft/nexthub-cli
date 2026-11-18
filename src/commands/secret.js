@@ -6,7 +6,7 @@ export function resolveProjectId({ flag } = {}) {
   if (flag) return flag;
   const p = loadProject();
   if (p?.projectId) return p.projectId;
-  const err = new Error("No project selected. Pass --project <id> or run `deploysapp link`.");
+  const err = new Error("No project selected. Pass --project <id> or run `nexthub link`.");
   err.exitCode = 2;
   throw err;
 }

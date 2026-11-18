@@ -39,7 +39,7 @@ export function pollForToken(fetchFn, { intervalMs = 5000, maxMs = 600000 } = {}
         return setTimeout(tick, intervalMs);
       }
       if (err === "expired_token") {
-        const e = new Error("Code expired — run `deploysapp login` again.");
+        const e = new Error("Code expired — run `nexthub login` again.");
         e.exitCode = 3;
         return reject(e);
       }

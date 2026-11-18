@@ -1,4 +1,7 @@
-const DEFAULT_BASE_URL = "https://api.nexthub.hu";
+import { env } from "./env.js";
+import { USER_AGENT } from "./meta.js";
+
+export const DEFAULT_BASE_URL = "https://api.nexthub.hu";
 
 const ERROR_CODES = {
   UNAUTHORIZED: { retryable: false },
@@ -24,10 +27,10 @@ function codeForStatus(status) {
   return "UNKNOWN_ERROR";
 }
 
-export class DeploysAppError extends Error {
+export class NextHubError extends Error {
   constructor({ code, message, status, retryAfter, details }) {
     super(message);
-    this.name = "DeploysAppError";
+    this.name = "NextHubError";
     this.code = code;
     this.status = status ?? null;
     this.retryable = ERROR_CODES[code]?.retryable ?? false;
@@ -49,20 +52,20 @@ export class DeploysAppError extends Error {
   }
 }
 
-export class DeploysAppClient {
+export class NextHubClient {
   constructor({ apiKey, baseUrl } = {}) {
-    this.apiKey = apiKey || process.env.DEPLOYSAPP_API_KEY;
-    this.baseUrl = (baseUrl || process.env.DEPLOYSAPP_API_URL || DEFAULT_BASE_URL).replace(/\/$/, "");
+    this.apiKey = apiKey || env("API_KEY");
+    this.baseUrl = (baseUrl || env("API_URL") || DEFAULT_BASE_URL).replace(/\/$/, "");
     if (!this.apiKey) {
-      throw new DeploysAppError({
+      throw new NextHubError({
         code: "INVALID_CONFIG",
-        message: "Missing DEPLOYSAPP_API_KEY environment variable. Generate one at https://dashboard.nexthub.hu/dashboard/account → API Keys.",
+        message: "Missing API key. Run `nexthub login`, or set NEXTHUB_API_KEY (generate one at https://dashboard.nexthub.hu/dashboard/account → API Keys).",
       });
     }
     if (!/^dsa_/.test(this.apiKey)) {
-      throw new DeploysAppError({
+      throw new NextHubError({
         code: "INVALID_CONFIG",
-        message: "DEPLOYSAPP_API_KEY must start with 'dsa_' — looks like an invalid key.",
+        message: "The NextHub API key must start with 'dsa_' — looks like an invalid key.",
       });
     }
   }
@@ -77,7 +80,7 @@ export class DeploysAppClient {
     const headers = {
       "Authorization": `Bearer ${this.apiKey}`,
       "Accept": "application/json",
-      "User-Agent": "deploysapp-mcp/0.6.1",
+      "User-Agent": USER_AGENT,
     };
     if (body !== undefined) headers["Content-Type"] = "application/json";
 
@@ -89,9 +92,9 @@ export class DeploysAppClient {
         body: body !== undefined ? JSON.stringify(body) : undefined,
       });
     } catch (cause) {
-      throw new DeploysAppError({
+      throw new NextHubError({
         code: "NETWORK_ERROR",
-        message: `Network error contacting DeploysApp API at ${this.baseUrl}: ${cause?.message || cause}`,
+        message: `Network error contacting the NextHub API at ${this.baseUrl}: ${cause?.message || cause}`,
         details: { cause: cause?.message || String(cause) },
       });
     }
@@ -109,7 +112,7 @@ export class DeploysAppClient {
         "Unknown error";
       const retryAfterHeader = res.headers.get("retry-after");
       const retryAfter = retryAfterHeader ? Number(retryAfterHeader) : null;
-      throw new DeploysAppError({
+      throw new NextHubError({
         code,
         message: `${method} ${path} → ${res.status} ${code}: ${apiMessage}`,
         status: res.status,

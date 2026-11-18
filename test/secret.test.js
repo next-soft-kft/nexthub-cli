@@ -21,7 +21,7 @@ import { loadProject } from "../src/project.js";
 
 let dir, cwd;
 beforeEach(() => {
-  dir = mkdtempSync(join(tmpdir(), "dsa-secret-"));
+  dir = mkdtempSync(join(tmpdir(), "nexthub-secret-"));
   cwd = process.cwd();
   process.chdir(dir);
   vi.clearAllMocks();
@@ -36,7 +36,7 @@ describe("resolveProjectId", () => {
     expect(resolveProjectId({ flag: "proj_flag" })).toBe("proj_flag");
   });
 
-  it("falls back to .deploysapp.json projectId", () => {
+  it("falls back to the link file projectId", () => {
     loadProject.mockReturnValue({ projectId: "proj_file", serviceId: "svc_file" });
     expect(resolveProjectId({})).toBe("proj_file");
   });

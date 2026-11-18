@@ -1,6 +1,6 @@
 {
-  "name": "deploysapp-cli",
-  "version": "0.1.1",
+  "name": "nexthub-cli",
+  "version": "0.2.0",
   "engines": {
     "node": ">=20"
   },
@@ -11,6 +11,7 @@
     "test": "vitest run"
   },
   "keywords": [
+    "nexthub",
     "deploysapp",
     "cli",
     "hosting",
@@ -18,7 +19,7 @@
   ],
   "author": "",
   "license": "MIT",
-  "description": "Command-line client for the DeploysApp hosting platform — deploy, logs, env, and service control from your terminal.",
+  "description": "Command-line client for the NextHub hosting platform (nexthub.hu) — deploy, logs, env, and service control from your terminal.",
   "homepage": "https://nexthub.hu/dokumentacio",
   "repository": {
     "type": "git",
@@ -29,8 +30,9 @@
   },
   "type": "module",
   "bin": {
-    "deploysapp": "bin/deploysapp.js",
-    "dsa": "bin/deploysapp.js"
+    "nexthub": "bin/nexthub.js",
+    "deploysapp": "bin/nexthub.js",
+    "dsa": "bin/nexthub.js"
   },
   "dependencies": {
     "commander": "^14.0.3"
