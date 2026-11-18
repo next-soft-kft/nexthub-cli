@@ -1,11 +1,11 @@
 import { createInterface } from "readline/promises";
 import { makeClient } from "../config.js";
-import { saveProject } from "../project.js";
+import { saveProject, PROJECT_FILE } from "../project.js";
 
 export async function link({ service } = {}) {
   const client = makeClient();
   const { services } = await client.get("/services");
-  if (!services?.length) { console.log("No services found. Create one in the dashboard first."); return; }
+  if (!services?.length) { console.log("No services found. Create one in the NextHub dashboard first."); return; }
 
   let chosen;
   if (service) {
@@ -20,5 +20,5 @@ export async function link({ service } = {}) {
     if (!chosen) { const e = new Error("Invalid selection."); e.exitCode = 2; throw e; }
   }
   saveProject({ serviceId: chosen.id, projectId: chosen.projectId });
-  console.log(`✓ Linked to ${chosen.name} (${chosen.id}). Wrote .deploysapp.json`);
+  console.log(`✓ Linked to ${chosen.name} (${chosen.id}). Wrote ${PROJECT_FILE}`);
 }
