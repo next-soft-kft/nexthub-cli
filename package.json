@@ -19,6 +19,14 @@
   "author": "",
   "license": "MIT",
   "description": "Command-line client for the DeploysApp hosting platform — deploy, logs, env, and service control from your terminal.",
+  "homepage": "https://nexthub.hu/dokumentacio",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/next-soft-kft/nexthub-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/next-soft-kft/nexthub-cli/issues"
+  },
   "type": "module",
   "bin": {
     "deploysapp": "bin/deploysapp.js",
