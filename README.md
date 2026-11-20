@@ -1,5 +1,7 @@
 # nexthub-cli
 
+> **Kivezetve (2026-11-20).** A terminálos CLI megszűnt: a NextHub `/cli/device/*` belépése már nem él, ezért a `login` nem működik. Programozott és AI-ügynökös kezeléshez a [`nexthub-mcp`](https://github.com/next-soft-kft/nexthub-mcp) MCP-szervert használd (`npx -y nexthub-mcp`, `NEXTHUB_API_KEY`).
+
 Command-line interface for [NextHub](https://nexthub.hu) — deploy, manage, and monitor your services from the terminal.
 
 ```
